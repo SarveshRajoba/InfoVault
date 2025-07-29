@@ -1,0 +1,23 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  host: localhost
+  username: sarvesh
+  password: sarvesh123
+  pool: 5
+
+development:
+  <<: *default
+  database: InfoVault
+
+test:
+  adapter: postgresql
+  encoding: unicode
+  database: InfoVault_test
+  username: sarvesh
+  password: sarvesh123
+  host: localhost
+
+production:
+  <<: *default
+  url: <%= ENV['DATABASE_URL'] %>

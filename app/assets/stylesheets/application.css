@@ -1,0 +1,291 @@
+/*
+ * This is a manifest file that'll be compiled into application.css.
+ *
+ * With Propshaft, assets are served efficiently without preprocessing steps. You can still include
+ * application-wide styles in this file, but keep in mind that CSS precedence will follow the standard
+ * cascading order, meaning styles declared later in the document or manifest will override earlier ones,
+ * depending on specificity.
+ *
+ * Consider organizing styles into separate files for maintainability.
+ */
+.subject-title {
+  font-weight: 600;
+  font-size: 1.2rem;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: black;
+}
+
+.clickable-card {
+  cursor: pointer;
+}
+
+.new-subject-btn {
+  background: linear-gradient(to right, #007bff, #66a3ff);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease-in-out;
+}
+
+.new-subject-btn:hover {
+  transform: translateY(-2px);
+}
+
+
+
+
+.new-subject-btn {
+  background: linear-gradient(to right, #007bff, #66a3ff);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease-in-out;
+}
+
+.new-subject-btn:hover {
+  transform: translateY(-2px);
+}
+
+.action-btn {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out;
+}
+
+.action-btn:hover {
+  transform: translateY(-2px);
+}
+
+/* Existing styles*/
+
+.card {
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  border-radius: 0.25rem;
+}
+
+.card-body {
+  padding: 1.25rem;
+}
+
+.card-title {
+  margin-bottom: 0.75rem;
+}
+
+.card-text {
+  margin-bottom: 1rem;
+}
+
+.btn-info {
+  background-color: #17a2b8;
+  border-color: #17a2b8;
+  color: white;
+}
+
+.btn-info:hover {
+  background-color: #138496;
+  border-color: #138496;
+  color: white;
+}
+
+.btn-sm {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+  border-radius: 0.2rem;
+}
+
+.shadow-sm {
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.text-muted {
+  color: #6c757d;
+}
+
+.d-flex {
+  display: flex;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.gap-3 {
+  gap: 1rem;
+}
+
+.new-subject-btn {
+  background: linear-gradient(to right, #007bff, #66a3ff);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease-in-out;
+}
+
+.new-subject-btn:hover {
+  transform: translateY(-2px);
+}
+
+.subject-title {
+  font-weight: 600;
+  font-size: 1.2rem;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: black;
+}
+
+.clickable-card {
+  cursor: pointer;
+}
+
+.subject-card {
+  transition: box-shadow 0.3s ease;
+}
+
+.subject-card:hover {
+  transition: transform 0.3s ease;
+  transform: translateY(-5px);
+  box-shadow: 50px 50px 50px rgba(0, 0, 0, 1);
+
+}
+
+/* landing pagge */
+
+.landing-page {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+  color: #333;
+}
+
+.landing-header {
+  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  color: white;
+  text-align: center;
+  padding: 100px 0;
+  animation: fadeIn 1s ease-out;
+}
+
+.landing-title {
+  font-size: 3em;
+  margin-bottom: 10px;
+}
+
+.landing-subtitle {
+  font-size: 1.2em;
+  margin-bottom: 30px;
+}
+
+.landing-cta {
+  display: inline-block;
+  padding: 15px 30px;
+  background-color: #ffc107;
+  color: #333;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.landing-cta:hover {
+  background-color: #ffca2c;
+}
+
+.landing-features {
+  padding: 80px 0;
+  text-align: center;
+  background-color: #f8f8f8;
+}
+
+.landing-features .container {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+.feature {
+  width: 300px;
+  margin: 20px;
+  padding: 30px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.feature:hover {
+  transform: translateY(-5px);
+}
+
+.feature-icon {
+  font-size: 3em;
+  margin-bottom: 20px;
+  color: #2575fc;
+}
+
+.landing-how-it-works {
+  padding: 80px 0;
+  text-align: center;
+  background-color: #e8f5e9;
+}
+
+.landing-how-it-works h2 {
+  margin-bottom: 50px;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.step-number {
+  background-color: #2575fc;
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 20px;
+}
+
+.landing-footer {
+  background-color: #333;
+  color: white;
+  text-align: center;
+  padding: 30px 0;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+
+/* card 3 dots */
+
+.card-options {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.subject-card {
+  position: relative;
+  /* transition: transform 0.3s ease, box-shadow 0.3s ease; */
+}
+
+/* .subject-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
+} */
+
+.dropdown-menu-up {
+  top: auto !important;
+  bottom: 100% !important;
+  margin-bottom: 0.125rem !important;
+}
