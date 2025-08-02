@@ -1,23 +1,24 @@
+# A better configuration
+
 default: &default
   adapter: postgresql
   encoding: unicode
-  host: localhost
-  username: sarvesh
-  password: sarvesh123
-  pool: 5
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
 
 development:
   <<: *default
   database: InfoVault
-
-test:
-  adapter: postgresql
-  encoding: unicode
-  database: InfoVault_test
+  # Keep your local development settings separate
+  host: localhost
   username: sarvesh
   password: sarvesh123
-  host: localhost
+
+test:
+  <<: *default
+  database: InfoVault_test
 
 production:
   <<: *default
+  # This is perfect. It inherits only the adapter, encoding, and pool.
+  # The URL provides all other necessary details (host, username, password, database).
   url: <%= ENV['DATABASE_URL'] %>
