@@ -16,7 +16,7 @@
         <% @paragraphs.each do |paragraph| %>
           <tr>
             <td><%= paragraph.title %></td>
-            <td><%= truncate(paragraph.content, length: 100) %></td>
+            <td><%= raw truncate(paragraph.content, length: 100) %></td>
             <td>
               <%= link_to "Show", subject_chapter_paragraph_path(@chapter.subject, @chapter, paragraph), class: "btn btn-info btn-sm" %>
               <%= link_to "Edit", edit_subject_chapter_paragraph_path(@chapter.subject, @chapter, paragraph), class: "btn btn-warning btn-sm" %>

@@ -1,152 +1,42 @@
 <div class="container mt-4">
-  <h2 class="mb-4"><%= @paragraph.title %></h2>
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="subject-title mb-0"><%= @paragraph.title %></h2>
+    <%= link_to "Back to Topics", subject_chapter_paragraphs_path(@chapter.subject, @chapter), class: "btn btn-secondary", data: { turbo: false } %>
+  </div>
 
   <% fixed_paragraph_color = "hsl(226, 48%, 84%)" %>
-  <div class="card mb-4 p-3 shadow-sm" style="background-color: <%= fixed_paragraph_color %>;">
+  <div class="card mb-5 p-4 shadow-sm border-0" style="background-color: <%= fixed_paragraph_color %>; border-radius: 12px;">
     <div class="card-body">
-      <h5 class="card-title">Paragraph Content</h5>
-      <p class="card-text"><%= @paragraph.content %></p>
+      <h5 class="card-title text-dark mb-3">Content</h5>
+      <div class="card-text text-dark" style="font-size: 1.05rem; line-height: 1.7;"><%= raw @paragraph.content %></div>
     </div>
   </div>
 
-  <h3>Generated Flashcards</h3>
+  <h3 class="mb-4 fw-bold text-dark">Flashcards</h3>
   <% if @paragraph.questions.any? %>
     <div class="row">
       <% @paragraph.questions.each do |question| %>
         <% random_light_color = "hsl(#{rand(360)}, #{rand(30..70)}%, #{rand(80..95)}%)" %>
         <div class="col-md-4 mb-4">
-          <div class="question-card" data-question-id="<%= question.id %>" data-answers='<%= question.answers.map(&:answer).to_json %>'
-          style="background-color: <%= random_light_color %>;">
+          <div class="question-card" data-question-id="<%= question.id %>" data-answers='<%= question.answers.map(&:answer).to_json %>' style="background-color: <%= random_light_color %>;">
             <div class="card-content">
-              <h5 class="card-title">Q: <%= question.question.html_safe %></h5>
-              <p class="card-text-hint">Click to reveal answer</p>
+              <h5 class="card-title mb-2 text-dark"><%= question.question.html_safe %></h5>
+              <p class="card-text-hint text-muted">Click to reveal answer</p>
             </div>
           </div>
         </div>
       <% end %>
     </div>
   <% else %>
-    <p>No flashcards generated yet.</p>
+    <div class="text-center py-5 bg-white rounded border" style="border-color: #e2e8f0;">
+      <i class="bi bi-card-text fs-1 text-muted mb-3"></i>
+      <p class="lead text-muted">No flashcards generated yet.</p>
+    </div>
   <% end %>
-
-  <div class="mt-4">
-    <%= link_to "Back to Paragraphs", subject_chapter_paragraphs_path(@chapter.subject, @chapter), class: "btn btn-secondary", data: { turbo: false } %>
-  </div>
 
   <div id="overlay" class="modal-overlay"></div>
   <div id="flipped-card-container" class="modal-card-container"></div>
 </div>
-
-<style>
-  .question-card {
-    width: 100%;
-    height: 220px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    cursor: pointer;
-    transition: transform 0.3s, box-shadow 0.3s;
-    overflow: hidden;
-  }
-
-  .question-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-  }
-
-  .card-content {
-    padding: 16px;
-    width: 100%;
-    height: 100%;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-
-  .card-text-hint {
-    margin-top: 12px;
-    font-size: 0.9em;
-    font-style: italic;
-    opacity: 0.7;
-    text-align: center;
-  }
-
-  .flip-card {
-    background-color: transparent;
-    width: 100%;
-    height: 300px;
-    perspective: 1000px;
-    cursor: pointer;
-    will-change: transform;
-  }
-
-  .flip-card-inner {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    transition: transform 0.6s;
-    transform-style: preserve-3d;
-    will-change: transform;
-    -moz-backface-visibility: hidden;
-    backface-visibility: hidden;
-  }
-
-  .flip-card-front, .flip-card-back {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    -webkit-backface-visibility: hidden;
-    -moz-backface-visibility: hidden;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    overflow: hidden;
-    pointer-events: auto;
-  }
-
-  .flip-card-front {
-    z-index: 2;
-    color: #333;
-  }
-
-  .flip-card-back {
-    transform: rotateY(180deg);
-    color: #333;
-  }
-
-  .card-title, .list-unstyled, .text-muted {
-    width: 100%;
-    word-wrap: break-word;
-  }
-
-  .modal-overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
-    z-index: 1000;
-
-  -moz-transform: translateZ(0);
-  transform: translateZ(0);
-  }
-
-  .modal-card-container {
-    display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1001;
-    width: 80%;
-    max-width: 500px;
-    will-change: transform;
-
-  -moz-transform: translate(-50%, -50%) translateZ(0);
-  will-change: transform, opacity;
-  }
-</style>
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {
@@ -160,15 +50,16 @@
         const questionText = this.querySelector('.card-title').textContent;
         const backgroundColor = this.style.backgroundColor;
         
+        // Logic to find answers for the specific question
         let answerHtml = '<p class="text-muted">No answers available</p>';
         <% @paragraph.questions.each do |question| %>
           if (questionId === "<%= question.id %>") {
             answerHtml = `
               <% if question.answers.any? %>
-                <ul class="list-unstyled">
+                <ul class="list-unstyled mb-0 text-dark">
                   <% question.answers.each do |answer| %>
-                    <li>
-                      <strong>Answer:</strong> '<%= escape_javascript(sanitize(answer.answer))%>'
+                    <li class="mb-2">
+                      <%= escape_javascript(sanitize(answer.answer))%>
                     </li>
                   <% end %>
                 </ul>
@@ -184,8 +75,8 @@
             <div class="flip-card-inner">
               <div class="flip-card-front" style="background-color: ${backgroundColor}">
                 <div class="card-content">
-                  <h5 class="card-title">${questionText}</h5>
-                  <p class="card-text-hint">Click to see answer</p>
+                  <h5 class="card-title px-3 text-dark">${questionText}</h5>
+                  <p class="card-text-hint text-muted">Click to see answer</p>
                 </div>
               </div>
               <div class="flip-card-back" style="background-color: ${backgroundColor}">

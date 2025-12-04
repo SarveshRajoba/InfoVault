@@ -1,53 +1,118 @@
 <div class="landing-page">
-  <header class="landing-header w-100">
+
+  <!-- ================= HEADER ================= -->
+  <header class="landing-header">
     <div class="container">
-      <h1 class="landing-title">InfoVault: Your Smart Study Companion</h1>
-      <p class="landing-subtitle">Effortlessly create, organize, and master your study notes with intelligent flashcards.</p>
-      <a href="/subjects" class="landing-cta">Get Started Now</a>
+      <div class="header-content">
+        <div class="badge-pill">
+          <i class="bi bi-stars"></i> <span>AI-Powered Learning</span>
+        </div>
+
+        <h1 class="landing-title">
+          InfoVault: Your Smart <br>
+          <span class="highlight-text">Study Companion</span>
+        </h1>
+
+        <p class="landing-subtitle">
+          Effortlessly create, organize, and master your study notes with intelligent flashcards powered by AI.
+        </p>
+
+        <div class="cta-group">
+          <a href="/subjects" class="btn-main">
+            <i class="bi bi-rocket-takeoff-fill"></i> Get Started Free
+          </a>
+
+          <a href="#features" class="btn-outline">
+            <i class="bi bi-play-circle-fill"></i> See How It Works
+          </a>
+        </div>
+      </div>
     </div>
   </header>
 
-  <section class="landing-features">
+  <!-- ================= FEATURES ================= -->
+  <section class="landing-features" id="features">
     <div class="container">
-      <div class="feature">
-        <i class="bi bi-lightbulb-fill feature-icon"></i>
-        <h3>Intelligent Flashcard Generation</h3>
-        <p>Turn your notes into effective flashcards automatically. Focus on learning, not creating.</p>
+      <div class="section-header">
+        <h2 class="section-title">Why InfoVault?</h2>
+        <p class="section-subtitle">Accelerate your learning journey with precision tools.</p>
       </div>
-      <div class="feature">
-        <i class="bi bi-folder-fill feature-icon"></i>
-        <h3>Organized Study Materials</h3>
-        <p>Structure your subjects, chapters, and paragraphs for streamlined learning and easy access.</p>
-      </div>
-      <div class="feature">
-        <i class="bi bi-rocket-takeoff-fill feature-icon"></i>
-        <h3>Boost Your Retention</h3>
-        <p>Enhance memory recall with interactive flashcards and spaced repetition techniques.</p>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="icon-box">
+            <i class="bi bi-lightbulb-fill"></i>
+          </div>
+          <h3>Intelligent Flashcards</h3>
+          <p>Turn your notes into effective flashcards automatically with our advanced AI engine.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="icon-box">
+            <i class="bi bi-folder-fill"></i>
+          </div>
+          <h3>Organized Materials</h3>
+          <p>Structure subjects, chapters, and paragraphs for instant access and clarity.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="icon-box">
+            <i class="bi bi-rocket-takeoff-fill"></i>
+          </div>
+          <h3>Boost Retention</h3>
+          <p>Master your subjects using interactive flashcards and proven spaced repetition.</p>
+        </div>
       </div>
     </div>
   </section>
 
-  <section class="landing-how-it-works w-100">
+  <!-- ================= HOW IT WORKS ================= -->
+  <section class="landing-steps">
     <div class="container">
-      <h2>How It Works</h2>
-      <div class="step">
-        <span class="step-number">1</span>
-        <p>Create a subject and add chapters.</p>
+      <div class="section-header">
+        <h2 class="section-title">How It Works</h2>
+        <p class="section-subtitle">Start learning in three simple steps.</p>
       </div>
-      <div class="step">
-        <span class="step-number">2</span>
-        <p>Input your paragraph content and generate flashcards.</p>
-      </div>
-      <div class="step">
-        <span class="step-number">3</span>
-        <p>Study with interactive flashcards and track your progress.</p>
+
+      <div class="steps-grid">
+        <div class="step-item">
+          <div class="step-number">01</div>
+          <h3>Create & Organize</h3>
+          <p>Create a subject and add chapters to build your knowledge base.</p>
+        </div>
+
+        <div class="step-item">
+          <div class="step-number">02</div>
+          <h3>Input & Generate</h3>
+          <p>Paste your notes or paragraphs and let AI generate the questions.</p>
+        </div>
+
+        <div class="step-item">
+          <div class="step-number">03</div>
+          <h3>Study & Master</h3>
+          <p>Test yourself with interactive cards and track your progress.</p>
+        </div>
       </div>
     </div>
   </section>
 
+  <!-- ================= FOOTER ================= -->
   <footer class="landing-footer">
     <div class="container">
-      <p>&copy; <%= Time.now.year %> InfoVault. All rights reserved.</p>
+      <div class="footer-row">
+        <div class="footer-brand">
+          <div class="footer-logo">
+            <i class="bi bi-lightning-charge-fill"></i> InfoVault
+          </div>
+          <p>&copy; <%= Time.now.year %> InfoVault. All rights reserved.</p>
+        </div>
+
+        <div class="footer-links">
+          <a href="/subjects">Subjects</a>
+          <a href="#features">Features</a>
+          <a href="/">About</a>
+        </div>
+      </div>
     </div>
   </footer>
 </div>

@@ -1,36 +1,48 @@
-require 'httparty'
-require 'json'
+require "httparty"
+require "json"
 
 class GeminiService
   include HTTParty
-  base_uri 'https://generativelanguage.googleapis.com/v1beta/models'
+  base_uri "https://generativelanguage.googleapis.com/v1beta/models"
 
   def initialize
-    @api_key = ENV['GEMINI_API_KEY'] 
+    @api_key = ENV["GEMINI_API_KEY"]
   end
 
-  def generate_questions_and_answers(paragraph)
+  def generate_questions_and_answers(paragraph, num_questions = 5)
+    # Return empty array if user wants no questions
+    return [] if num_questions == 0
+    
     # Check if API key is configured
     unless @api_key
       Rails.logger.error "GEMINI_API_KEY environment variable is not set"
       return []
     end
 
+    # Calculate appropriate max tokens based on question count
+    # ~100 tokens per Q&A pair + buffer
+    max_tokens = [num_questions * 100 + 200, 4096].min
+
     response = self.class.post(
       "/gemini-2.0-flash:generateContent?key=#{@api_key}",
-      headers: { 'Content-Type' => 'application/json' },
-      body: { contents: [{ parts: 
-      [{ 
-        text: "Generate 5 questions and answers from: #{paragraph}, I want the response to be in specific format, There should be no any other text rather than specified format. Format should include only questions and answers with numbers like (Q1: <Question Content>, Answer: <Answer Content>), however there are some more details you need to follow, 1: Questions should be in 10-13 words not more than that. 2: Answers should be in 20-30 words not more than that. 
-        
-        For Example: 
-        Q1: What is the difference between isomers and resonance structures?, 
+      headers: { 'Content-Type': "application/json" },
+      body: {
+        contents: [ { parts: [ {
+        text: "Generate #{num_questions} questions and answers from: #{paragraph}, I want the response to be in specific format, There should be no any other text rather than specified format. Format should include only questions and answers with numbers like (Q1: <Question Content>, Answer: <Answer Content>), however there are some more details you need to follow, 1: Questions should be in 10-13 words not more than that. 2: Answers should be in 20-30 words not more than that.
+
+        For Example:
+        Q1: What is the difference between isomers and resonance structures?,
         Answer: Isomers are different compounds with the same molecular formula, while resonance structures are different representations of the same molecule
-        " 
-      }] }] }.to_json
+        "
+      } ] } ],
+        generationConfig: {
+          temperature: 0.3,  # Lower temperature for more focused, consistent Q&A generation
+          maxOutputTokens: max_tokens
+        }
+      }.to_json
     )
-    
-    Rails.logger.info "Gemini API Response: #{response.body}"  
+
+    Rails.logger.info "Gemini API Response: #{response.body}"
 
     # Check if response was successful
     unless response.success?
@@ -38,8 +50,8 @@ class GeminiService
       return []
     end
 
-    str = response.dig('candidates', 0, 'content', 'parts', 0, 'text')
-    
+    str = response.dig("candidates", 0, "content", "parts", 0, "text")
+
     # Check if we got a valid response
     unless str
       Rails.logger.error "No valid response text from Gemini API"
@@ -50,11 +62,11 @@ class GeminiService
 
     questions_array = qa_pairs.map.with_index(1) do |pair, index|
       question, answer = pair.split("\nAnswer: ")
-      question = question.sub(/,$/, '').sub(/^Q\d+: /, '') 
+      question = question.sub(/,$/, "").sub(/^Q\d+: /, "")
 
       { id: index, question: question, answer: answer }.with_indifferent_access
-
     end
 
+    questions_array
   end
 end

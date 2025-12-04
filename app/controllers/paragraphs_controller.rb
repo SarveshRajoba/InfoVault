@@ -21,7 +21,7 @@ class ParagraphsController < ApplicationController
     @paragraph = @chapter.paragraphs.new(paragraph_params)
     @paragraph.user = current_user
     if @paragraph.save
-      res = generate_questions_and_answers(@paragraph)
+      res = generate_questions_and_answers(@paragraph, @paragraph.num_questions)
       
       redirect_to subject_chapter_paragraphs_path(@chapter.subject, @chapter), notice: "Paragraph created successfully!!" 
     else
@@ -37,7 +37,7 @@ class ParagraphsController < ApplicationController
     if @paragraph.update(paragraph_params)
       if @paragraph.saved_change_to_content?
         @paragraph.questions.destroy_all
-        res = generate_questions_and_answers(@paragraph)
+        res = generate_questions_and_answers(@paragraph, @paragraph.num_questions)
       end
       redirect_to subject_chapter_paragraphs_path(@chapter.subject, @chapter), notice: "Paragraph updated successfully."
     else
@@ -56,7 +56,7 @@ class ParagraphsController < ApplicationController
   private
 
   def paragraph_params
-    params.require(:paragraph).permit(:title, :content)
+    params.require(:paragraph).permit(:title, :content, :num_questions)
   end
 
 
@@ -99,9 +99,9 @@ class ParagraphsController < ApplicationController
   end
 
 
-  def generate_questions_and_answers(paragraph)
+  def generate_questions_and_answers(paragraph, num_questions = 5)
     gemini_service = GeminiService.new 
-    response_text = gemini_service.generate_questions_and_answers(paragraph.content)
+    response_text = gemini_service.generate_questions_and_answers(paragraph.content, num_questions)
   
     if response_text.present?
       begin

@@ -25,7 +25,7 @@
               <h5 class="card-title fw-bold mb-3 text-center">
                 <%= paragraph.title %>
               </h5>
-              <p class="card-text flex-grow-1"><%= truncate(paragraph.content, length: 100) %></p>
+              <div class="card-text flex-grow-1"><%= truncate(strip_tags(paragraph.content), length: 100) %></div>
             </div>
             <div class="card-options position-absolute" style="top: 8px; right: 8px;">
               <div class="dropdown">
@@ -58,8 +58,13 @@
                   </div>
 
                   <div class="mb-3">
-                    <%= f.label :content, "Content", class: "form-label" %>
-                    <%= f.text_area :content, class: "form-control", rows: 6, required: true %>
+                    <%= f.label :content, "Content (HTML supported)", class: "form-label" %>
+                    <%= f.text_area :content, class: "form-control", rows: 8, required: true, placeholder: "You can paste HTML content here. Supported tags: h1-h6, p, br, strong, em, ul, ol, li" %>
+                  </div>
+                  <div class="mb-3">
+                    <%= f.label :num_questions, "Number of Questions", class: "form-label" %>
+                    <%= f.number_field :num_questions, class: "form-control", min: 0, max: 20, required: true %>
+                    <small class="form-text text-muted">Generate 0-20 flashcard questions (0 for no questions)</small>
                   </div>
 
                   <div class="modal-footer">
@@ -100,8 +105,13 @@
               <%= f.text_field :title, class: "form-control", required: true %>
             </div>
             <div class="mb-3">
-              <%= f.label :content, "Content", class: "form-label" %>
-              <%= f.text_area :content, class: "form-control", rows: 6, required: true %>
+              <%= f.label :content, "Content (HTML supported)", class: "form-label" %>
+              <%= f.text_area :content, class: "form-control", rows: 8, required: true, placeholder: "You can paste HTML content here. Supported tags: h1-h6, p, br, strong, em, ul, ol, li" %>
+            </div>
+            <div class="mb-3">
+              <%= f.label :num_questions, "Number of Questions", class: "form-label" %>
+              <%= f.number_field :num_questions, class: "form-control", min: 0, max: 20, value: 5, required: true %>
+              <small class="form-text text-muted">Generate 0-20 flashcard questions (0 for no questions, default: 5)</small>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
