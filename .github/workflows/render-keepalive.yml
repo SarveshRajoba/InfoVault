@@ -15,6 +15,7 @@ jobs:
           urls=(
             "https://infovault-1.onrender.com/"
             "https://youtube-learning-manager.vercel.app/"
+            "https://youtube-learning-manager.onrender.com"
           )
 
           for url in "${urls[@]}"; do
