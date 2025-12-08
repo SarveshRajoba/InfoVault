@@ -2,14 +2,14 @@ name: Render Keepalive
 
 on:
   schedule:
-    - cron: '*/5 * * * *'
-  workflow_dispatch: {}   # optional: allows manual run from UI
+    - cron: "*/5 * * * *"
+  workflow_dispatch: {}
 
 jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
-      - name: Ping Render apps (with retries and timeout)
+      - name: Ping Render apps safely
         run: |
           set -euo pipefail
           urls=(
@@ -20,28 +20,34 @@ jobs:
 
           for url in "${urls[@]}"; do
             echo "===> $(date -u +"%Y-%m-%d %H:%M:%S UTC") - pinging $url"
+
+            # Longer timeout for Render (cold boots are slow)
+            if [[ "$url" == *"onrender.com"* ]]; then
+              timeout=25
+            else
+              timeout=10
+            fi
+
             success=0
             tries=0
             max_tries=3
 
             while [ $tries -lt $max_tries ]; do
               tries=$((tries+1))
-              # -f : fail on HTTP error codes (4xx/5xx)
-              # --max-time 10 : timeout in seconds
-              # -I : HEAD would be lighter, but we use GET by default (no -I)
-              # -sS : silent but show errors
-              http_status=$(curl -sS -o /dev/null -w "%{http_code}" --max-time 10 -L "$url") || rc=$?
-              rc=${rc:-0}
-              echo "  try #$tries -> HTTP status: $http_status, exit: $rc"
-              if [ "$rc" -eq 0 ] && [ "${http_status:0:1}" != "5" ]; then
+
+              http_status=$(curl -I -sS -o /dev/null -w "%{http_code}" --max-time $timeout -L "$url" || echo "000")
+              echo "  try #$tries -> HTTP: $http_status"
+
+              # Success if not 5xx
+              if [[ "$http_status" != 5* && "$http_status" != "000" ]]; then
                 success=1
                 break
               fi
-              sleep 2
+
+              sleep 3
             done
 
             if [ $success -eq 0 ]; then
-              echo "ERROR: $url failed after $max_tries tries"
-              exit 1
+              echo "WARNING: $url failed after $max_tries tries — continuing"
             fi
           done
