@@ -13,9 +13,11 @@ jobs:
         run: |
           set -euo pipefail
           urls=(
+          "https://infovault-ktyl.onrender.com"
             "https://infovault-1.onrender.com/"
             "https://youtube-learning-manager.vercel.app/"
             "https://youtube-learning-manager.onrender.com/keepalive"
+            "https://youtube-learning-manager-7d42.onrender.com"
           )
 
           for url in "${urls[@]}"; do
