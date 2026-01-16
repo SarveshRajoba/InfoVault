@@ -24,7 +24,8 @@ class GeminiService
     max_tokens = [num_questions * 100 + 200, 4096].min
 
     response = self.class.post(
-      "/gemini-2.0-flash:generateContent?key=#{@api_key}",
+     #"/gemini-2.0-flash:generateContent?key=#{@api_key}",
+      "/gemini-flash-latest:generateContent?key=#{@api_key}",
       headers: { 'Content-Type': "application/json" },
       body: {
         contents: [ { parts: [ {
