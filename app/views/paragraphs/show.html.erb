@@ -46,67 +46,67 @@
 
     questionCards.forEach(card => {
       card.addEventListener("click", function () {
-        const questionId = this.dataset.questionId;
-        const questionText = this.querySelector('.card-title').textContent;
+        const questionText = this.querySelector('.card-title').textContent.trim();
         const backgroundColor = this.style.backgroundColor;
-        
-        // Logic to find answers for the specific question
-        let answerHtml = '<p class="text-muted">No answers available</p>';
-        <% @paragraph.questions.each do |question| %>
-          if (questionId === "<%= question.id %>") {
-            answerHtml = `
-              <% if question.answers.any? %>
-                <ul class="list-unstyled mb-0 text-dark">
-                  <% question.answers.each do |answer| %>
-                    <li class="mb-2">
-                      <%= escape_javascript(sanitize(answer.answer))%>
-                    </li>
-                  <% end %>
-                </ul>
-              <% else %>
-                <p class="text-muted">No answers available</p>
-              <% end %>
-            `;
-          }
-        <% end %>
-        
+        const answers = JSON.parse(this.dataset.answers || "[]");
+
+        let answerHtml;
+        if (answers.length > 0) {
+          answerHtml = `<ul class="list-unstyled mb-0 text-dark">` +
+            answers.map(a => `<li class="mb-2">${a}</li>`).join("") +
+            `</ul>`;
+        } else {
+          answerHtml = `<p class="text-muted">No answers available yet.</p>`;
+        }
+
+        const baseStyle = `position:absolute;top:0;left:0;width:100%;height:100%;border-radius:16px;overflow:hidden;display:flex;align-items:center;justify-content:center;background-color:${backgroundColor};box-shadow:0 20px 25px -5px rgba(0,0,0,0.1);transition:opacity 0.3s ease;`;
+
         const flipCardHtml = `
-          <div class="flip-card">
-            <div class="flip-card-inner">
-              <div class="flip-card-front" style="background-color: ${backgroundColor}">
-                <div class="card-content">
-                  <h5 class="card-title px-3 text-dark">${questionText}</h5>
-                  <p class="card-text-hint text-muted">Click to see answer</p>
-                </div>
+          <div id="modal-flip-card" style="position:relative;width:100%;height:300px;cursor:pointer;border-radius:16px;">
+            <div id="face-front" style="${baseStyle} z-index:2;">
+              <div class="card-content">
+                <h5 class="card-title px-3 text-dark">${questionText}</h5>
+                <p class="card-text-hint text-muted">Click to see answer</p>
               </div>
-              <div class="flip-card-back" style="background-color: ${backgroundColor}">
-                <div class="card-content">
-                  ${answerHtml}
-                </div>
+            </div>
+            <div id="face-back" style="${baseStyle} z-index:1;opacity:0;border:2px solid #3b82f6;">
+              <div class="card-content">
+                ${answerHtml}
               </div>
             </div>
           </div>
         `;
+
         flippedCardContainer.innerHTML = flipCardHtml;
-        
         overlay.style.display = "block";
         flippedCardContainer.style.display = "flex";
         document.body.style.overflow = "hidden";
-        
-        const modalFlipCard = flippedCardContainer.querySelector('.flip-card');
-        modalFlipCard.addEventListener("click", function(e) {
+
+        let flipped = false;
+        const flipCard = document.getElementById("modal-flip-card");
+        const front = document.getElementById("face-front");
+        const back  = document.getElementById("face-back");
+
+        flipCard.addEventListener("click", function (e) {
           e.stopPropagation();
-          const inner = this.querySelector('.flip-card-inner');
-          if (inner.style.transform === 'rotateY(180deg)') {
-            inner.style.transform = 'rotateY(0deg)';
+          flipped = !flipped;
+          if (flipped) {
+            front.style.opacity = "0";
+            front.style.zIndex = "1";
+            back.style.opacity = "1";
+            back.style.zIndex = "2";
           } else {
-            inner.style.transform = 'rotateY(180deg)';
+            front.style.opacity = "1";
+            front.style.zIndex = "2";
+            back.style.opacity = "0";
+            back.style.zIndex = "1";
           }
         });
 
-        overlay.addEventListener("click", closeFlippedCard);
+        overlay.addEventListener("click", closeFlippedCard, { once: true });
       });
     });
+
 
     function closeFlippedCard() {
       overlay.style.display = "none";

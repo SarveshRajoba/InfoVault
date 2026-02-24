@@ -1,73 +1,77 @@
-require "httparty"
-require "json"
+require 'httparty'
+require 'json'
 
 class GeminiService
   include HTTParty
-  base_uri "https://generativelanguage.googleapis.com/v1beta/models"
+  base_uri 'https://generativelanguage.googleapis.com/v1beta/models'
 
   def initialize
     @api_key = ENV["GEMINI_API_KEY"]
   end
 
-  def generate_questions_and_answers(paragraph, num_questions = 5)
-    # Return empty array if user wants no questions
-    return [] if num_questions == 0
-    
-    # Check if API key is configured
-    unless @api_key
-      Rails.logger.error "GEMINI_API_KEY environment variable is not set"
-      return []
-    end
-
-    # Calculate appropriate max tokens based on question count
-    # ~100 tokens per Q&A pair + buffer
-    max_tokens = [num_questions * 100 + 200, 4096].min
-
+  def generate_questions_and_answers(paragraph, number)
     response = self.class.post(
-     #"/gemini-2.0-flash:generateContent?key=#{@api_key}",
-      "/gemini-flash-latest:generateContent?key=#{@api_key}",
-      headers: { 'Content-Type': "application/json" },
-      body: {
-        contents: [ { parts: [ {
-        text: "Generate #{num_questions} questions and answers from: #{paragraph}, I want the response to be in specific format, There should be no any other text rather than specified format. Format should include only questions and answers with numbers like (Q1: <Question Content>, Answer: <Answer Content>), however there are some more details you need to follow, 1: Questions should be in 10-13 words not more than that. 2: Answers should be in 20-30 words not more than that.
-
+      "/gemini-2.0-flash:generateContent?key=#{@api_key}",
+      headers: { 'Content-Type' => 'application/json' },
+      body: { contents: [{ parts:
+      [{
+        text: "Generate #{number} questions and answers from: #{paragraph}, I want the response to be in specific format, There should be no any other text rather than specified format. Format should include only questions and answers with numbers like (Q1: <Question Content>, Answer: <Answer Content>), however there are some more details you need to follow, 1: Questions should be in 10-13 words not more than that. 2: Answers should be in 20-30 words not more than that.
         For Example:
         Q1: What is the difference between isomers and resonance structures?,
         Answer: Isomers are different compounds with the same molecular formula, while resonance structures are different representations of the same molecule
         "
-      } ] } ],
-        generationConfig: {
-          temperature: 0.3,  # Lower temperature for more focused, consistent Q&A generation
-          maxOutputTokens: max_tokens
-        }
-      }.to_json
+      }] }] }.to_json
     )
-
     Rails.logger.info "Gemini API Response: #{response.body}"
 
-    # Check if response was successful
-    unless response.success?
-      Rails.logger.error "Gemini API call failed: #{response.code} - #{response.body}"
-      return []
-    end
+    # Parse the JSON response first
+    response_data = JSON.parse(response.body)
+    str = response_data.dig('candidates', 0, 'content', 'parts', 0, 'text')
 
-    str = response.dig("candidates", 0, "content", "parts", 0, "text")
+    Rails.logger.info "Raw text from Gemini: #{str}"
 
-    # Check if we got a valid response
-    unless str
-      Rails.logger.error "No valid response text from Gemini API"
-      return []
-    end
+    return [] unless str.present?
 
-    qa_pairs = str.split("\n\n")
+    # Split by double newlines first, then handle single newlines
+    qa_pairs = str.split(/\n\n+/)
+    Rails.logger.info "QA pairs after split: #{qa_pairs.inspect}"
 
     questions_array = qa_pairs.map.with_index(1) do |pair, index|
-      question, answer = pair.split("\nAnswer: ")
-      question = question.sub(/,$/, "").sub(/^Q\d+: /, "")
+      Rails.logger.info "Processing pair #{index}: #{pair}"
+
+      question = nil
+      answer = nil
+
+      # Pattern 1: Q1: question\nAnswer: answer
+      if pair.match(/^Q\d+:\s*(.+?)\nAnswer:\s*(.+)$/m)
+        question = $1.strip
+        answer = $2.strip
+      # Pattern 2: Q1: question, Answer: answer
+      elsif pair.match(/^Q\d+:\s*(.+?),\s*Answer:\s*(.+)$/)
+        question = $1.strip
+        answer = $2.strip
+      # Pattern 3: Just split by newline if Answer: is present
+      elsif pair.include?("Answer:")
+        parts = pair.split("Answer:")
+        question = parts[0].sub(/^Q\d+:\s*/, '').strip
+        answer = parts[1].strip
+      else
+        Rails.logger.warn "Could not parse pair #{index}: #{pair}"
+        next
+      end
+
+      # Clean up the question and answer
+      question = question.sub(/,$/, '').sub(/^Q\d+:\s*/, '').strip
+      answer = answer.strip
+
+      Rails.logger.info "Extracted - Question: '#{question}', Answer: '#{answer}'"
+
+      next if question.blank? || answer.blank?
 
       { id: index, question: question, answer: answer }.with_indifferent_access
-    end
+    end.compact
 
+    Rails.logger.info "Final questions array: #{questions_array.inspect}"
     questions_array
   end
 end

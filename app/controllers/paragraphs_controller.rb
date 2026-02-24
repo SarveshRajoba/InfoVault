@@ -21,8 +21,7 @@ class ParagraphsController < ApplicationController
     @paragraph = @chapter.paragraphs.new(paragraph_params)
     @paragraph.user = current_user
     if @paragraph.save
-      res = generate_questions_and_answers(@paragraph, @paragraph.num_questions)
-      
+      GenerateQuestionsJob.perform_later(@paragraph.id, @paragraph.num_questions)
       redirect_to subject_chapter_paragraphs_path(@chapter.subject, @chapter), notice: "Paragraph created successfully!!" 
     else
       redirect_to subject_chapter_paragraphs_path, alert: flash[:alert] = @paragraph.errors.full_messages.to_sentence
@@ -37,7 +36,7 @@ class ParagraphsController < ApplicationController
     if @paragraph.update(paragraph_params)
       if @paragraph.saved_change_to_content?
         @paragraph.questions.destroy_all
-        res = generate_questions_and_answers(@paragraph, @paragraph.num_questions)
+        GenerateQuestionsJob.perform_later(@paragraph.id, @paragraph.num_questions)
       end
       redirect_to subject_chapter_paragraphs_path(@chapter.subject, @chapter), notice: "Paragraph updated successfully."
     else
@@ -99,22 +98,5 @@ class ParagraphsController < ApplicationController
   end
 
 
-  def generate_questions_and_answers(paragraph, num_questions = 5)
-    gemini_service = GeminiService.new 
-    response_text = gemini_service.generate_questions_and_answers(paragraph.content, num_questions)
-  
-    if response_text.present?
-      begin
-          response_text.map do |h|
-            question = paragraph.questions.create!(question: h[:question])
-            question.answers.create!(answer: h[:answer])
-          end
-    
-      rescue => e
-        Rails.logger.error "Error parsing questions & answers: #{e.message}"
-      end
-    else
-      Rails.logger.error "No response from Gemini API"
-    end
-  end
+
 end
